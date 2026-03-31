@@ -1,0 +1,28 @@
+{
+  "name": "clean-architecture-plugin",
+  "version": "1.0.0",
+  "description": "Full Clean Architecture plugin for Claude Code based on Uncle Bob's book",
+  "type": "module",
+  "main": "src/server.js",
+  "bin": {
+    "ca-mcp-server": "src/server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/morcoss/clean-architecture-plugin.git"
+  },
+  "keywords": [
+    "claude-code",
+    "claude-plugin",
+    "clean-architecture",
+    "uncle-bob",
+    "solid",
+    "mcp",
+    "model-context-protocol"
+  ],
+  "author": "MorcosS",
+  "license": "MIT",
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

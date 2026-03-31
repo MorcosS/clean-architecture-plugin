@@ -80,4 +80,4 @@ After creating files, verify:
 After creating all files, provide a summary table showing:
 - Each layer and what was created
 - The Dependency Rule map for this specific project
-- Next steps (e.g., "run `/ca-entity Order` to create your first entity")
+- Next steps (e.g., "run `/clean-architecture:entity Order` to create your first entity")

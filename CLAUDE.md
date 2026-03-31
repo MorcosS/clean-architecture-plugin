@@ -85,18 +85,18 @@ Always check:
 
 ## Available Skills
 
-- `/ca-init [description]` — Scaffold project
-- `/ca-entity [Name]` — Create entity
-- `/ca-usecase [Name]` — Create use case
-- `/ca-controller [Name]` — Create controller
-- `/ca-presenter [Name]` — Create presenter
-- `/ca-gateway [Name]` — Create gateway
-- `/ca-boundary [description]` — Define boundary
-- `/ca-solid [path]` — SOLID audit
-- `/ca-components [path]` — Component cohesion/coupling audit
-- `/ca-check` — Dependency Rule scan
-- `/ca-review` — Full architecture review
-- `/ca-test [Name]` — Create compliant tests
-- `/ca-main` — Create/update composition root
-- `/ca-diagram` — Generate architecture diagrams
-- `/ca-migrate [path]` — Migrate existing code
+- `/clean-architecture:init [description]` — Scaffold project
+- `/clean-architecture:entity [Name]` — Create entity
+- `/clean-architecture:usecase [Name]` — Create use case
+- `/clean-architecture:controller [Name]` — Create controller
+- `/clean-architecture:presenter [Name]` — Create presenter
+- `/clean-architecture:gateway [Name]` — Create gateway
+- `/clean-architecture:boundary [description]` — Define boundary
+- `/clean-architecture:solid [path]` — SOLID audit
+- `/clean-architecture:components [path]` — Component cohesion/coupling audit
+- `/clean-architecture:check` — Dependency Rule scan
+- `/clean-architecture:review` — Full architecture review
+- `/clean-architecture:test [Name]` — Create compliant tests
+- `/clean-architecture:main` — Create/update composition root
+- `/clean-architecture:diagram` — Generate architecture diagrams
+- `/clean-architecture:migrate [path]` — Migrate existing code

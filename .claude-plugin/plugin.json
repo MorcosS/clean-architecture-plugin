@@ -1,0 +1,29 @@
+{
+  "name": "clean-architecture",
+  "description": "Full Clean Architecture plugin based on Uncle Bob's book — all layers, SOLID, component principles, Dependency Rule, Humble Object, and more.",
+  "version": "1.0.0",
+  "author": {
+    "name": "MorcosS",
+    "homepage": "https://github.com/morcoss/clean-architecture-plugin"
+  },
+  "repository": "https://github.com/morcoss/clean-architecture-plugin",
+  "license": "MIT",
+  "keywords": [
+    "clean-architecture",
+    "uncle-bob",
+    "solid",
+    "dependency-rule",
+    "use-cases",
+    "entities",
+    "ddd",
+    "architecture"
+  ],
+  "mcpServers": {
+    "clean-architecture": {
+      "command": "node",
+      "args": ["${CLAUDE_PLUGIN_ROOT}/src/server.js"]
+    }
+  },
+  "skills": "./skills/",
+  "hooks": "./hooks/hooks.json"
+}

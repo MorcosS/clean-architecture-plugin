@@ -38,7 +38,7 @@ Interactor
 ## Your Task
 
 ### Step 1: Verify the Repository Interface
-The interface should already exist (created during `/ca-usecase`). Check `src/usecases/ports/output/I<Domain>Repository.<ext>`.
+The interface should already exist (created during `/clean-architecture:usecase`). Check `src/usecases/ports/output/I<Domain>Repository.<ext>`.
 
 If it does not exist, create it now in the USE CASE layer:
 ```typescript

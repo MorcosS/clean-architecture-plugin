@@ -26,7 +26,7 @@ Score: 0-10 points
 
 ## Section 2: Dependency Rule Compliance
 
-Perform a full dependency scan (same as `/ca-check`):
+Perform a full dependency scan (same as `/clean-architecture:check`):
 - Entities importing from outer layers.
 - Use cases importing from adapters or frameworks.
 - Adapters importing from frameworks for business reasons (vs. purely for wiring).
@@ -90,7 +90,7 @@ Score: 0-15 points
 
 ## Section 6: SOLID Principles
 
-Check all source files for SOLID violations (same analysis as `/ca-solid`):
+Check all source files for SOLID violations (same analysis as `/clean-architecture:solid`):
 - SRP: Classes with multiple axes of change.
 - OCP: Switch/if-else chains requiring modification to extend.
 - LSP: Subtypes that violate the contracts of their base types.
@@ -103,7 +103,7 @@ Score: 0-10 points
 
 ## Section 7: Component Principles
 
-Perform component analysis (same as `/ca-components`):
+Perform component analysis (same as `/clean-architecture:components`):
 - ADP: Cycles in the component dependency graph.
 - SDP: Stable components depending on volatile ones.
 - SAP: Stable concrete components (Zone of Pain) or useless abstractions.

@@ -1,144 +1,151 @@
 # Clean Architecture Plugin for Claude Code
 
-A comprehensive Claude Code plugin that enforces and guides implementation of **Clean Architecture** as defined by Robert C. Martin ("Uncle Bob") in his book *Clean Architecture: A Craftsman's Guide to Software Structure and Design*.
-
-## What This Plugin Does
-
-This plugin provides 15 Claude Code skills that cover every major concept in the Clean Architecture book:
-
-| Skill | Command | Description |
-|---|---|---|
-| Initialize | `/ca-init` | Scaffold a full Clean Architecture project structure |
-| Entity | `/ca-entity` | Create Enterprise Business Rule entities |
-| Use Case | `/ca-usecase` | Create Application Business Rule use case interactors |
-| Controller | `/ca-controller` | Create Interface Adapter controllers |
-| Presenter | `/ca-presenter` | Create Presenters using the Humble Object pattern |
-| Gateway | `/ca-gateway` | Create Repository/Gateway interfaces and implementations |
-| Boundary | `/ca-boundary` | Define and enforce architectural boundaries |
-| SOLID | `/ca-solid` | Analyze and fix SOLID principle violations |
-| Components | `/ca-components` | Analyze component cohesion (REP/CCP/CRP) and coupling (ADP/SDP/SAP) |
-| Check | `/ca-check` | Full Dependency Rule violation scan |
-| Review | `/ca-review` | Complete Clean Architecture audit |
-| Test | `/ca-test` | Create tests respecting the Test Boundary |
-| Main | `/ca-main` | Create the Main component (composition root) |
-| Diagram | `/ca-diagram` | Generate architecture diagrams |
-| Migrate | `/ca-migrate` | Migrate existing code toward Clean Architecture |
+A native Claude Code plugin that enforces and guides implementation of **Clean Architecture** as defined by Robert C. Martin ("Uncle Bob") in *Clean Architecture: A Craftsman's Guide to Software Structure and Design*.
 
 ## Installation
 
-```bash
-git clone https://github.com/morcoss/clean-architecture-plugin.git
-cd clean-architecture-plugin
-chmod +x install.sh
-./install.sh
+### Option 1 — Install directly from GitHub (recommended)
+
+In any Claude Code session, run:
+
+```
+/plugin install clean-architecture@morcoss
 ```
 
-## Uninstallation
+Or add the marketplace first if needed:
+
+```
+/plugin marketplace add morcoss/clean-architecture-plugin
+/plugin install clean-architecture
+```
+
+### Option 2 — Install from a local clone
 
 ```bash
-./uninstall.sh
+git clone https://github.com/morcoss/clean-architecture-plugin.git
+```
+
+Then in Claude Code:
+
+```
+/plugin install /path/to/clean-architecture-plugin
+```
+
+### Option 3 — Point Claude Code directly at the directory
+
+```bash
+claude --plugin-dir /path/to/clean-architecture-plugin
 ```
 
 ## Requirements
 
-- Claude Code CLI installed (`npm install -g @anthropic-ai/claude-code` or equivalent)
-- Bash 4+
+- Claude Code (latest version)
+- Node.js 18+ (for the MCP server — the dependency scanner, metrics calculator, and scaffolder)
 
-## Clean Architecture Concepts Covered
+No `npm install` needed — the MCP server uses only Node.js built-ins.
 
-### The Dependency Rule
-> *"Source code dependencies must point only inward, toward higher-level policies."*
+## Available Commands
 
-Every skill enforces this rule. Dependencies flow: Frameworks → Interface Adapters → Use Cases → Entities.
+All commands are namespaced under `/clean-architecture:`.
 
-### The Layers
+| Command | What it does |
+|---|---|
+| `/clean-architecture:init` | Scaffold a full Clean Architecture project |
+| `/clean-architecture:entity` | Create an Enterprise Business Rule entity |
+| `/clean-architecture:usecase` | Create a Use Case interactor with Input/Output Ports |
+| `/clean-architecture:controller` | Create an Interface Adapter controller |
+| `/clean-architecture:presenter` | Create a Presenter (Humble Object Pattern) |
+| `/clean-architecture:gateway` | Create a Gateway/Repository with data mapper |
+| `/clean-architecture:boundary` | Define and enforce architectural boundaries |
+| `/clean-architecture:solid` | Audit and fix SOLID principle violations |
+| `/clean-architecture:components` | Audit component cohesion (REP/CCP/CRP) and coupling (ADP/SDP/SAP) |
+| `/clean-architecture:check` | Full Dependency Rule violation scan |
+| `/clean-architecture:review` | 100-point Clean Architecture audit scorecard |
+| `/clean-architecture:test` | Create Test Boundary compliant tests by layer |
+| `/clean-architecture:main` | Create/update the Main composition root |
+| `/clean-architecture:diagram` | Generate architecture diagrams (ASCII + Mermaid) |
+| `/clean-architecture:migrate` | Phased migration from any anti-pattern to Clean Architecture |
+
+## MCP Tools (used automatically by Claude)
+
+The plugin ships an MCP server (`src/server.js`) that gives Claude real file-system analysis capabilities:
+
+| Tool | Description |
+|---|---|
+| `ca_scan` | Scans every source file for Dependency Rule violations — returns severity, file, line, and fix |
+| `ca_metrics` | Calculates Fan-in, Fan-out, Instability (I), Abstractness (A), and Distance from Main Sequence (D) per component |
+| `ca_scaffold` | Creates the full directory and file scaffold for a new Clean Architecture project |
+| `ca_layer_of` | Identifies which layer a file belongs to and checks its imports for compliance |
+| `ca_cycles` | Detects cyclic dependencies between components (ADP check) |
+
+## Real-time Hook
+
+The plugin registers a **PostToolUse hook** that fires after every file edit. If the file you just wrote violates the Dependency Rule, you'll see a warning inline in Claude Code immediately:
 
 ```
-┌─────────────────────────────────────┐
-│         Frameworks & Drivers         │  ← Web, DB, UI, Devices
-│  ┌───────────────────────────────┐  │
-│  │      Interface Adapters        │  │  ← Controllers, Presenters, Gateways
-│  │  ┌─────────────────────────┐  │  │
-│  │  │    Application Business   │  │  │  ← Use Cases
-│  │  │         Rules             │  │  │
-│  │  │  ┌───────────────────┐   │  │  │
-│  │  │  │  Enterprise Biz   │   │  │  │  ← Entities
-│  │  │  │      Rules        │   │  │  │
-│  │  │  └───────────────────┘   │  │  │
-│  │  └─────────────────────────┘  │  │
-│  └───────────────────────────────┘  │
-└─────────────────────────────────────┘
+⚠️  CLEAN ARCHITECTURE — DEPENDENCY RULE VIOLATION
+   File:  src/usecases/interactors/PlaceOrderInteractor.ts
+   Layer: USECASES (may only depend on: entities)
+
+   ✗ imports "../../adapters/gateways/PostgresOrderRepo" (adapters layer)
+
+   Fix: Define an interface (port) in usecases/ports/ and inject the concrete impl from main/.
 ```
-
-### SOLID Principles
-- **SRP** – Single Responsibility Principle
-- **OCP** – Open/Closed Principle
-- **LSP** – Liskov Substitution Principle
-- **ISP** – Interface Segregation Principle
-- **DIP** – Dependency Inversion Principle
-
-### Component Principles
-**Cohesion:** REP (Reuse/Release Equivalence), CCP (Common Closure), CRP (Common Reuse)
-**Coupling:** ADP (Acyclic Dependencies), SDP (Stable Dependencies), SAP (Stable Abstractions)
-
-### Architecture Patterns
-- Screaming Architecture
-- Humble Object Pattern
-- Partial Boundaries
-- The Main Component as composition root
-- Test Boundary
-- Clean Embedded Architecture
 
 ## Usage Examples
 
-### Start a new project
 ```
-/ca-init TypeScript REST API for order management
-```
-
-### Create an entity
-```
-/ca-entity Order
-```
-
-### Create a use case
-```
-/ca-usecase PlaceOrder
+/clean-architecture:init TypeScript REST API for order management
+/clean-architecture:entity Order
+/clean-architecture:usecase PlaceOrder
+/clean-architecture:check
+/clean-architecture:review
+/clean-architecture:solid src/
+/clean-architecture:migrate src/services/
 ```
 
-### Full architecture review
-```
-/ca-review
-```
+## Clean Architecture Concepts Covered
 
-### Check dependency violations
-```
-/ca-check
-```
+**Layers:** Entities → Use Cases → Interface Adapters → Frameworks & Drivers → Main
 
-### Analyze SOLID compliance
-```
-/ca-solid src/
-```
+**Principles:**
+- The Dependency Rule (Chapter 22)
+- SOLID — SRP, OCP, LSP, ISP, DIP (Part III)
+- Component Cohesion — REP, CCP, CRP (Chapter 13)
+- Component Coupling — ADP, SDP, SAP (Chapter 14)
+- Screaming Architecture (Chapter 21)
+- Humble Object Pattern (Chapter 23)
+- Partial Boundaries (Chapter 24)
+- The Main Component (Chapter 26)
+- Test Boundary (Chapter 28)
+- The Database is a Detail (Chapter 30)
+- The Web is a Detail (Chapter 32)
+- Frameworks are Details (Chapter 33)
 
-## Project Structure Generated by `/ca-init`
+## Project Structure Generated by `/clean-architecture:init`
 
 ```
 src/
-├── entities/           # Enterprise Business Rules
-│   └── ...
-├── usecases/           # Application Business Rules
-│   ├── ports/          # Input/Output port interfaces
-│   └── interactors/    # Use case implementations
-├── adapters/           # Interface Adapters
-│   ├── controllers/
-│   ├── presenters/
-│   └── gateways/
-├── frameworks/         # Frameworks & Drivers
-│   ├── web/
-│   ├── db/
-│   └── external/
-└── main/               # Composition Root
+├── entities/                 # Enterprise Business Rules (no dependencies)
+├── usecases/
+│   ├── ports/
+│   │   ├── input/            # Input Port interfaces
+│   │   └── output/           # Output Port & Repository interfaces
+│   └── interactors/          # Use Case implementations
+├── adapters/
+│   ├── controllers/          # Framework input → Use Case request model
+│   ├── presenters/           # Use Case response model → View model
+│   └── gateways/             # Repository implementations + data mappers
+│       └── in-memory/        # In-memory repos for unit tests
+├── frameworks/
+│   ├── web/                  # HTTP framework wiring
+│   ├── db/                   # Database drivers & ORM config
+│   └── external/             # Third-party API clients
+└── main/                     # Composition Root — wires everything
+tests/
+├── unit/                     # Pure tests, no I/O
+├── integration/              # Gateway tests with real DB
+└── e2e/                      # Full stack tests
 ```
 
 ## License
