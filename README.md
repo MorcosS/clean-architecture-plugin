@@ -4,22 +4,26 @@ A native Claude Code plugin that enforces and guides implementation of **Clean A
 
 ## Installation
 
-### Option 1 — Install directly from GitHub (recommended)
+### Option 1 — Install directly (recommended)
 
-In any Claude Code session, run:
+In any Claude Code session:
 
 ```
-/plugin install clean-architecture@morcoss
+/plugin install morcoss/clean-architecture-plugin
 ```
 
-Or add the marketplace first if needed:
+> **Note:** `/plugin marketplace add` and `/plugin install` are different commands.
+> - `/plugin marketplace add morcoss/clean-architecture-plugin` — registers this repo as a **marketplace** (a registry), then you still need to install the plugin from it.
+> - `/plugin install morcoss/clean-architecture-plugin` — installs the **plugin directly**. This is what you want.
+
+### Option 2 — Via marketplace (two steps)
 
 ```
 /plugin marketplace add morcoss/clean-architecture-plugin
-/plugin install clean-architecture
+/plugin install clean-architecture@morcoss-clean-architecture-plugin
 ```
 
-### Option 2 — Install from a local clone
+### Option 3 — Install from a local clone
 
 ```bash
 git clone https://github.com/morcoss/clean-architecture-plugin.git
@@ -31,7 +35,7 @@ Then in Claude Code:
 /plugin install /path/to/clean-architecture-plugin
 ```
 
-### Option 3 — Point Claude Code directly at the directory
+### Option 4 — Point Claude Code directly at the directory
 
 ```bash
 claude --plugin-dir /path/to/clean-architecture-plugin
