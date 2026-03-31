@@ -8,8 +8,7 @@
     "plugins": [
       {                                                                                                                                                                                    
         "name": "clean-architecture",                             
-        "description": "Full Clean Architecture plugin for Claude Code. Covers all layers (Entities, Use Cases, Interface Adapters, Frameworks), SOLID principles, component 
-  cohesion/coupling, Dependency Rule scanning, Humble Object pattern, and more.",                                                                                                          
+        "description": "Full Clean Architecture plugin for Claude Code. Covers all layers (Entities, Use Cases, Interface Adapters, Frameworks), SOLID principles, component cohesion/coupling, Dependency Rule scanning, Humble Object pattern, and more.",                                                                                                          
         "source": "./",
         "version": "1.0.0",                                                                                                                                                                
         "author": {                                               
