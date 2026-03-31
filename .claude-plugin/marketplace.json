@@ -1,13 +1,20 @@
 {
-  "name": "Clean Architecture Plugin Marketplace",
-  "description": "Official marketplace for the Clean Architecture plugin — based on Uncle Bob's Clean Architecture book. Provides 15 skills, a real-time dependency violation hook, and an MCP server with file-system analysis tools.",
+  "name": "clean-architecture-marketplace",
+  "description": "Official marketplace for the Clean Architecture plugin — based on Uncle Bob's Clean Architecture book.",
+  "owner": {
+    "name": "MorcosS",
+    "github": "morcoss"
+  },
   "plugins": [
     {
       "name": "clean-architecture",
       "description": "Full Clean Architecture plugin for Claude Code. Covers all layers (Entities, Use Cases, Interface Adapters, Frameworks), SOLID principles, component cohesion/coupling, Dependency Rule scanning, Humble Object pattern, and more.",
       "source": "morcoss/clean-architecture-plugin",
       "version": "1.0.0",
-      "author": "MorcosS",
+      "author": {
+        "name": "MorcosS",
+        "github": "morcoss"
+      },
       "keywords": [
         "clean-architecture",
         "uncle-bob",
