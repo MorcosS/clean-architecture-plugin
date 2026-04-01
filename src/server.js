@@ -6,8 +6,8 @@
  */
 
 import { createInterface } from 'readline';
-import { readFileSync, existsSync, readdirSync, statSync, mkdirSync, writeFileSync } from 'fs';
-import { join, relative, extname, dirname } from 'path';
+import { readFileSync, existsSync, readdirSync, statSync, lstatSync, mkdirSync, writeFileSync } from 'fs';
+import { join, relative, extname, dirname, resolve, normalize } from 'path';
 import { fileURLToPath } from 'url';
 
 const rl = createInterface({ input: process.stdin, terminal: false });
@@ -200,6 +200,19 @@ function extractImports(content) {
   return [...new Set(imports)];
 }
 
+// ── Path safety ───────────────────────────────────────────────────────────
+
+const SAFE_ROOT = resolve(process.cwd());
+
+function safePath(p) {
+  if (!p || typeof p !== 'string') return SAFE_ROOT;
+  const resolved = resolve(normalize(p));
+  if (!resolved.startsWith(SAFE_ROOT)) {
+    throw new Error(`Path "${p}" is outside the working directory.`);
+  }
+  return resolved;
+}
+
 // ── File system helpers ────────────────────────────────────────────────────
 
 function walkSrc(dir, exts = ['.ts', '.js', '.py', '.java', '.go', '.cs', '.kt']) {
@@ -208,8 +221,9 @@ function walkSrc(dir, exts = ['.ts', '.js', '.py', '.java', '.go', '.cs', '.kt']
   for (const entry of readdirSync(dir)) {
     if (entry.startsWith('.') || entry === 'node_modules' || entry === '__pycache__') continue;
     const full = join(dir, entry);
-    const stat = statSync(full);
-    if (stat.isDirectory()) {
+    const lstat = lstatSync(full);
+    if (lstat.isSymbolicLink()) continue; // never follow symlinks
+    if (lstat.isDirectory()) {
       files.push(...walkSrc(full, exts));
     } else if (exts.includes(extname(full))) {
       files.push(full);
@@ -221,7 +235,7 @@ function walkSrc(dir, exts = ['.ts', '.js', '.py', '.java', '.go', '.cs', '.kt']
 // ── Tool: ca_scan ──────────────────────────────────────────────────────────
 
 function toolScan(args) {
-  const root = args.path || process.cwd();
+  const root = safePath(args.path);
   const srcDir = existsSync(join(root, 'src')) ? join(root, 'src') : root;
   const files = walkSrc(srcDir);
 
@@ -289,7 +303,7 @@ function toolScan(args) {
 // ── Tool: ca_metrics ──────────────────────────────────────────────────────
 
 function toolMetrics(args) {
-  const root = args.path || process.cwd();
+  const root = safePath(args.path);
   const srcDir = existsSync(join(root, 'src')) ? join(root, 'src') : root;
   const files = walkSrc(srcDir);
 
@@ -366,9 +380,13 @@ const EXT_MAP = {
   java: 'java', go: 'go', csharp: 'cs',
 };
 
+const VALID_LANGUAGES = new Set(['typescript', 'javascript', 'python', 'java', 'go', 'csharp']);
+
 function toolScaffold(args) {
-  const { rootPath, language = 'typescript', domain = 'Domain' } = args;
-  const ext = EXT_MAP[language] || 'ts';
+  const safeRoot = safePath(args.rootPath);
+  const lang = VALID_LANGUAGES.has(args.language) ? args.language : 'typescript';
+  const domain = (args.domain || 'Domain').replace(/[^a-zA-Z0-9_-]/g, '').slice(0, 64) || 'Domain';
+  const ext = EXT_MAP[lang] || 'ts';
 
   const dirs = [
     'src/entities',
@@ -393,7 +411,7 @@ function toolScaffold(args) {
 
   const created = [];
   for (const dir of dirs) {
-    const full = join(rootPath, dir);
+    const full = join(safeRoot, dir);
     if (!existsSync(full)) {
       mkdirSync(full, { recursive: true });
       created.push(dir + '/');
@@ -425,7 +443,7 @@ function toolScaffold(args) {
   ];
 
   for (const stub of stubs) {
-    const full = join(rootPath, stub.path);
+    const full = join(safeRoot, stub.path);
     if (!existsSync(full)) {
       writeFileSync(full, stub.content);
       created.push(stub.path);
@@ -433,7 +451,7 @@ function toolScaffold(args) {
   }
 
   return {
-    message: `Scaffold created for domain "${domain}" (${language})`,
+    message: `Scaffold created for domain "${domain}" (${lang})`,
     created,
     nextSteps: [
       `Run /clean-architecture:entity ${domain} to create your first entity`,
@@ -446,19 +464,19 @@ function toolScaffold(args) {
 // ── Tool: ca_layer_of ─────────────────────────────────────────────────────
 
 function toolLayerOf(args) {
-  const { filePath } = args;
-  const layerDef = detectLayer(filePath);
+  const safeFile = safePath(args.filePath);
+  const layerDef = detectLayer(safeFile);
 
   if (!layerDef) {
     return {
       layer: 'unknown',
-      message: `Could not determine layer for: ${filePath}`,
+      message: `Could not determine layer for: ${safeFile}`,
       suggestion: 'Move the file into one of: src/entities/, src/usecases/, src/adapters/, src/frameworks/, or src/main/',
     };
   }
 
   let content;
-  try { content = readFileSync(filePath, 'utf8'); } catch {
+  try { content = readFileSync(safeFile, 'utf8'); } catch {
     return { layer: layerDef.layer, level: layerDef.level, importViolations: [] };
   }
 
@@ -491,7 +509,7 @@ function toolLayerOf(args) {
 // ── Tool: ca_cycles ───────────────────────────────────────────────────────
 
 function toolCycles(args) {
-  const root = args.path || process.cwd();
+  const root = safePath(args.path);
   const srcDir = existsSync(join(root, 'src')) ? join(root, 'src') : root;
   const files = walkSrc(srcDir);
 
