@@ -24,6 +24,5 @@
       "args": ["${CLAUDE_PLUGIN_ROOT}/src/server.js"]
     }
   },
-  "skills": "./skills/",
-  "hooks": "./hooks/hooks.json"
+  "skills": "./skills/"
 }
