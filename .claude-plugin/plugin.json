@@ -18,11 +18,5 @@
     "ddd",
     "architecture"
   ],
-  "mcpServers": {
-    "clean-architecture": {
-      "command": "node",
-      "args": ["${CLAUDE_PLUGIN_ROOT}/src/server.js"]
-    }
-  },
   "skills": "./skills/"
 }
